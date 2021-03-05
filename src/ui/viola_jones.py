@@ -15,17 +15,17 @@ from src.core.viola_jones import detected
 class SourceImgWidget(ImgWidget):
     def __init__(self, **kwargs):
         super(SourceImgWidget, self).__init__(**kwargs)
-        self.faces = []
+        self.detections = []
 
     def clear(self):
-        for face in self.faces:
-            self.canvas.remove(face)
-        self.faces = []
+        for detection in self.detections:
+            self.canvas.remove(detection)
+        self.detections = []
 
-    def set_face(self, x, y, w, h):
+    def set_detection(self, x, y, w, h):
         with self.canvas:
             Color(0, 1, 0, .5)
-            self.faces.append(Line(rectangle = (x, y, w, h), width = 4))
+            self.detections.append(Line(rectangle = (x, y, w, h), width = 4))
 
 class MainBox(BoxLayout):
 
@@ -77,13 +77,13 @@ class MainBox(BoxLayout):
     def update_bg(self, *args): 
         self.bg.pos = self.pos ; self.bg.size = self.size
 
-    def _get_face_percentage(self, source_img, face):
-        '''Get percentage detection face on source img'''
+    def _get_detection_percentage(self, source_img, detection):
+        '''Get percentage detection on source img'''
         # Get size of source img
         h_s, w_s = source_img.shape
-        x_f, y_f, w_f, h_f = face
+        x_f, y_f, w_f, h_f = detection
 
-        # Count percentage part of match on source img
+        # Count percentage part of detection on source img
         left = x_f / w_s
         rigth = (w_s - (x_f + w_f)) / w_s
         bottom = (h_s - (y_f + h_f)) / h_s
@@ -102,18 +102,18 @@ class MainBox(BoxLayout):
             source_img = imageio.imread(self.source.img_path)
 
         ''' ============== RUN detection ============== '''
-        faces = detected(source_img)
+        detections = detected(source_img)
 
         ''' ============== OUTPUT ============== '''
-        for face in faces:
+        for detection in detections:
             # Get percentage part of match
-            left_face, rigth_face, bottom_face, top_face = self._get_face_percentage(source_img, face)
+            left_d, rigth_d, bottom_d, top_d = self._get_detection_percentage(source_img, detection)
 
-            # Set face on source img
+            # Set detection on source img
             x_s, y_s = self.source.img.rect.pos
             w_s, h_s = self.source.img.rect.size
-            x_face = x_s + w_s * left_face
-            y_face = y_s + h_s * bottom_face
-            w_face = w_s - w_s * rigth_face - w_s * left_face
-            h_face = h_s - h_s * top_face - h_s * bottom_face
-            self.source.img.set_face(x_face, y_face, w_face, h_face)
+            x_d = x_s + w_s * left_d
+            y_d = y_s + h_s * bottom_d
+            w_d = w_s - w_s * rigth_d - w_s * left_d
+            h_d = h_s - h_s * top_d - h_s * bottom_d
+            self.source.img.set_detection(x_d, y_d, w_d, h_d)
