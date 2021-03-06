@@ -37,9 +37,9 @@ class MainBox(BoxLayout):
 
         ''' ============== Menu of main boxes ============== '''        
         self.list_submainboxes = RelativeLayout()
-        bth_tm_mainbox = Button(text ='Template Matching', on_press=self.open_submain,
+        bth_tm_mainbox = Button(text ="Детектор 'Template Matching'", on_press=self.open_submain,
             size_hint = (0.2, 0.05), pos_hint={"center_x":.5, "center_y":.65}, background_color = (.6, .9, 1, 1)            )
-        bth_vj_mainbox = Button(text ='Viola Jones', on_press=self.open_submain,
+        bth_vj_mainbox = Button(text ="Детектор 'Viola Jones'", on_press=self.open_submain,
             size_hint = (0.2, 0.05), pos_hint={"center_x":.5, "center_y":.55}, background_color = (.6, .9, 1, 1))
         bth_ls_mainbox = Button(text ='Линии симметрии', on_press=self.open_submain,
             size_hint = (0.2, 0.05), pos_hint={"center_x":.5, "center_y":.45}, background_color = (.6, .9, 1, 1))
@@ -57,8 +57,8 @@ class MainBox(BoxLayout):
         #self.bg.source = ""
         self.remove_widget(self.list_submainboxes)
         
-        if instance.text == 'Template Matching': self.current_mainbox = self.tm_mainbox
-        if instance.text == 'Viola Jones': self.current_mainbox = self.vj_mainbox
+        if instance.text == "Детектор 'Template Matching'": self.current_mainbox = self.tm_mainbox
+        if instance.text == "Детектор 'Viola Jones'": self.current_mainbox = self.vj_mainbox
         if instance.text == 'Линии симметрии': self.current_mainbox = self.ls_mainbox
         self.add_widget(self.current_mainbox)
 

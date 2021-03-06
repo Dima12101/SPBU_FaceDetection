@@ -57,7 +57,7 @@ class MainBox(BoxLayout):
                 background_color = (.6, .9, 1, .5)) 
             btn.bind(on_release = lambda btn: dropdown_databaces.select(btn.text)) 
             dropdown_databaces.add_widget(btn) 
-        self.list_databaces = Button(text ='Базы лиц', size_hint=(1, 0.05), background_color = (.6, .9, 1, 1))
+        self.list_databaces = Button(text ='База лиц', size_hint=(1, 0.05), background_color = (.6, .9, 1, 1))
         self.list_databaces.bind(on_release = dropdown_databaces.open)
         dropdown_databaces.bind(on_select = lambda instance, x: setattr(self.list_databaces, 'text', x))
 

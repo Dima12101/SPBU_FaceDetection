@@ -101,18 +101,33 @@ class MainBox(BoxLayout):
         ''' ================ Tool BOX ================ '''
         self.tools_box = BoxLayout(orientation='vertical', size_hint=(.25, .92), spacing = 250)
 
-        # List of databases
-        dropdown_databaces = DropDown()
+        self.box_databases = BoxLayout(orientation='horizontal', size_hint=(1, .1), spacing = 10)
+        # List of databases (Template)
+        dropdown_databaces_T = DropDown()
         for database in ALL_DATABASES: 
             btn = Button(
-                text = database, on_press=self.update_database,
+                text = database, on_press=lambda instance: self.template.update_database(instance.text),
                 size_hint_y = None, height = 30, 
                 background_color = (.6, .9, 1, .5)) 
-            btn.bind(on_release = lambda btn: dropdown_databaces.select(btn.text)) 
-            dropdown_databaces.add_widget(btn) 
-        self.list_databaces = Button(text ='Базы лиц', size_hint=(1, .1), background_color = (.6, .9, 1, 1))
-        self.list_databaces.bind(on_release = dropdown_databaces.open)
-        dropdown_databaces.bind(on_select = lambda instance, x: setattr(self.list_databaces, 'text', x))
+            btn.bind(on_release = lambda btn: dropdown_databaces_T.select(btn.text)) 
+            dropdown_databaces_T.add_widget(btn) 
+        list_databaces_T = Button(text ='База (T)', size_hint=(0.5, 1), background_color = (.6, .9, 1, 1))
+        list_databaces_T.bind(on_release = dropdown_databaces_T.open)
+        dropdown_databaces_T.bind(on_select = lambda instance, x: setattr(list_databaces_T, 'text', x))
+        # List of databases (Source)
+        dropdown_databaces_S = DropDown()
+        for database in ALL_DATABASES: 
+            btn = Button(
+                text = database, on_press=lambda instance: self.source.update_database(instance.text),
+                size_hint_y = None, height = 30, 
+                background_color = (.6, .9, 1, .5)) 
+            btn.bind(on_release = lambda btn: dropdown_databaces_S.select(btn.text)) 
+            dropdown_databaces_S.add_widget(btn) 
+        list_databaces_S = Button(text ='База (S)', size_hint=(0.5, 1), background_color = (.6, .9, 1, 1))
+        list_databaces_S.bind(on_release = dropdown_databaces_S.open)
+        dropdown_databaces_S.bind(on_select = lambda instance, x: setattr(list_databaces_S, 'text', x))
+        self.box_databases.add_widget(list_databaces_T)
+        self.box_databases.add_widget(list_databaces_S)
 
         # List of methods
         dropdown_methods = DropDown()
@@ -134,7 +149,7 @@ class MainBox(BoxLayout):
             border = (30, 30, 30, 30),                    
             size_hint = (1, 0.2))
 
-        self.tools_box.add_widget(self.list_databaces)
+        self.tools_box.add_widget(self.box_databases)
         self.tools_box.add_widget(self.list_methods)
         self.tools_box.add_widget(self.bth_run_alg)
 
@@ -183,6 +198,16 @@ class MainBox(BoxLayout):
 
         return left, rigth, bottom, top
 
+    def _scale_area_by_source(self, area, template_img, source_img):
+        '''Resize template area by size of source img'''
+        h_t, w_t = template_img.shape
+        h_s, w_s = source_img.shape
+        scale = min(h_s / h_t, w_s / w_t)
+
+        h_a, w_a = area.shape
+        return cv2.resize(area, (int(w_a*scale), int(h_a*scale)))
+
+
     def _get_match_percentage(self, source_img, top_left, bottom_right):
         '''Get percentage part of match on source img'''
         # Get size of source img
@@ -219,6 +244,9 @@ class MainBox(BoxLayout):
         template_img_area = template_img[
             int(h_t*top_area):-int(h_t*bottom_area),
             int(w_t*left_area):-int(w_t*rigth_area)]
+
+        # Scale template area by source img
+        template_img_area = self._scale_area_by_source(template_img_area, template_img, source_img)
 
         ''' ============== RUN detection ============== '''
         top_left, bottom_right = detected(source_img, template_img_area, self.method)
