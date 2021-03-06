@@ -1,9 +1,11 @@
 DATA_DIR = './data'
 
-ALL_METHODS = [
+ALL_TM_METHODS = [
     'TM_CCOEFF', 'TM_CCOEFF_NORMED',
     'TM_CCORR', 'TM_CCORR_NORMED',
     'TM_SQDIFF', 'TM_SQDIFF_NORMED']
+
+ALL_LS_METHODS = ['express', 'window']
 
 ALL_DATABASES = ['ORL', 'Yale_faces']
 

@@ -13,6 +13,7 @@ import os
 
 from src.ui.template_matching import MainBox as TM_MainBox
 from src.ui.viola_jones import MainBox as VJ_MainBox
+from src.ui.lines_symmetry import MainBox as LS_MainBox
 from src.ui.configs import DATA_DIR
 
 class MainBox(BoxLayout):
@@ -29,6 +30,7 @@ class MainBox(BoxLayout):
         self.current_mainbox = None
         self.tm_mainbox = TM_MainBox()
         self.vj_mainbox = VJ_MainBox()
+        self.ls_mainbox = LS_MainBox()
 
         self.bth_to_menu  = Button(text='Меню', on_press=self.open_menu,
             size_hint = (0.1, 0.05), background_color = (.6, .9, 1, 1))
@@ -36,11 +38,14 @@ class MainBox(BoxLayout):
         ''' ============== Menu of main boxes ============== '''        
         self.list_submainboxes = RelativeLayout()
         bth_tm_mainbox = Button(text ='Template Matching', on_press=self.open_submain,
-            size_hint = (0.2, 0.05), pos_hint={"center_x":.5, "center_y":.55}, background_color = (.6, .9, 1, 1)            )
+            size_hint = (0.2, 0.05), pos_hint={"center_x":.5, "center_y":.65}, background_color = (.6, .9, 1, 1)            )
         bth_vj_mainbox = Button(text ='Viola Jones', on_press=self.open_submain,
+            size_hint = (0.2, 0.05), pos_hint={"center_x":.5, "center_y":.55}, background_color = (.6, .9, 1, 1))
+        bth_ls_mainbox = Button(text ='Линии симметрии', on_press=self.open_submain,
             size_hint = (0.2, 0.05), pos_hint={"center_x":.5, "center_y":.45}, background_color = (.6, .9, 1, 1))
         self.list_submainboxes.add_widget(bth_tm_mainbox)
         self.list_submainboxes.add_widget(bth_vj_mainbox)
+        self.list_submainboxes.add_widget(bth_ls_mainbox)
 
         self.add_widget(self.bth_to_menu)
         self.add_widget(self.list_submainboxes)
@@ -54,6 +59,7 @@ class MainBox(BoxLayout):
         
         if instance.text == 'Template Matching': self.current_mainbox = self.tm_mainbox
         if instance.text == 'Viola Jones': self.current_mainbox = self.vj_mainbox
+        if instance.text == 'Линии симметрии': self.current_mainbox = self.ls_mainbox
         self.add_widget(self.current_mainbox)
 
     def open_menu(self, instance):

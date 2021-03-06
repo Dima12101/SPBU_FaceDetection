@@ -34,7 +34,7 @@ class MainBox(BoxLayout):
         self.orientation = 'horizontal'
         self.spacing = 20
 
-        database = 'ORL'
+        default_database = 'ORL'
 
         with self.canvas:
             Color(.2, .3, .5, 1)
@@ -42,7 +42,7 @@ class MainBox(BoxLayout):
             self.bind(pos = self.update_bg, size = self.update_bg)
 
         ''' ================ Source Img BOX ================ '''
-        self.source = ImgBox(ImgWidget=SourceImgWidget, database=database)
+        self.source = ImgBox(ImgWidget=SourceImgWidget, database=default_database)
         self.source.title.text = "'Source' изображение"
 
         ''' ================ Tool BOX ================ '''
@@ -50,9 +50,9 @@ class MainBox(BoxLayout):
 
         # List of databases
         dropdown_databaces = DropDown()
-        for method in ALL_DATABASES: 
+        for database in ALL_DATABASES: 
             btn = Button(
-                text = method, on_press=lambda instance: self.source.update_database(instance.text),
+                text = database, on_press=lambda instance: self.source.update_database(instance.text),
                 size_hint_y = None, height = 30, 
                 background_color = (.6, .9, 1, .5)) 
             btn.bind(on_release = lambda btn: dropdown_databaces.select(btn.text)) 
@@ -81,13 +81,13 @@ class MainBox(BoxLayout):
         '''Get percentage detection on source img'''
         # Get size of source img
         h_s, w_s = source_img.shape
-        x_f, y_f, w_f, h_f = detection
+        x_d, y_d, w_d, h_d = detection
 
         # Count percentage part of detection on source img
-        left = x_f / w_s
-        rigth = (w_s - (x_f + w_f)) / w_s
-        bottom = (h_s - (y_f + h_f)) / h_s
-        top = y_f / h_s
+        left = x_d / w_s
+        rigth = (w_s - (x_d + w_d)) / w_s
+        bottom = (h_s - (y_d + h_d)) / h_s
+        top = y_d / h_s
         
         return left, rigth, bottom, top
 
@@ -106,7 +106,7 @@ class MainBox(BoxLayout):
 
         ''' ============== OUTPUT ============== '''
         for detection in detections:
-            # Get percentage part of match
+            # Get percentage part of detection
             left_d, rigth_d, bottom_d, top_d = self._get_detection_percentage(source_img, detection)
 
             # Set detection on source img

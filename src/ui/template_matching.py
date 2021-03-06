@@ -8,7 +8,7 @@ import imageio
 import os
 from collections import namedtuple
 
-from src.ui.configs import DATA_DIR, ALL_METHODS, ALL_DATABASES
+from src.ui.configs import DATA_DIR, ALL_TM_METHODS, ALL_DATABASES
 from src.ui.base import ImgWidget, ImgBox
 from src.core.template_matching import detected
 
@@ -87,7 +87,7 @@ class MainBox(BoxLayout):
         self.spacing = 20
 
         self.method = 'TM_CCOEFF'
-        database = 'ORL'
+        default_database = 'ORL'
 
         with self.canvas:
             Color(.2, .3, .5, 1)
@@ -95,7 +95,7 @@ class MainBox(BoxLayout):
             self.bind(pos = self.update_bg, size = self.update_bg)
 
         ''' ================ Template Img BOX ================ '''
-        self.template = ImgBox(ImgWidget=TemplateImgWidget, database=database)
+        self.template = ImgBox(ImgWidget=TemplateImgWidget, database=default_database)
         self.template.title.text = "'Template' изображение"
 
         ''' ================ Tool BOX ================ '''
@@ -103,9 +103,9 @@ class MainBox(BoxLayout):
 
         # List of databases
         dropdown_databaces = DropDown()
-        for method in ALL_DATABASES: 
+        for database in ALL_DATABASES: 
             btn = Button(
-                text = method, on_press=self.update_database,
+                text = database, on_press=self.update_database,
                 size_hint_y = None, height = 30, 
                 background_color = (.6, .9, 1, .5)) 
             btn.bind(on_release = lambda btn: dropdown_databaces.select(btn.text)) 
@@ -116,7 +116,7 @@ class MainBox(BoxLayout):
 
         # List of methods
         dropdown_methods = DropDown()
-        for method in ALL_METHODS: 
+        for method in ALL_TM_METHODS: 
             btn = Button(
                 text = method, on_press=lambda instance: setattr(self, 'method', instance.text), 
                 size_hint_y = None, height = 30, 
@@ -139,7 +139,7 @@ class MainBox(BoxLayout):
         self.tools_box.add_widget(self.bth_run_alg)
 
         ''' ================ Source Img BOX ================ '''
-        self.source = ImgBox(ImgWidget=SourceImgWidget, database=database)
+        self.source = ImgBox(ImgWidget=SourceImgWidget, database=default_database)
         self.source.title.text = "'Source' изображение"
 
         self.add_widget(self.template)
