@@ -86,7 +86,7 @@ class MainBox(BoxLayout):
         self.orientation = 'horizontal'
         self.spacing = 20
 
-        self.method = 'TM_CCOEFF'
+        self.method = 'TM_SQDIFF'
         default_database = 'ORL'
 
         with self.canvas:
