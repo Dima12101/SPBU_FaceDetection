@@ -1,6 +1,7 @@
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.dropdown import DropDown 
+from kivy.uix.textinput import TextInput
 from kivy.graphics import Color, Rectangle, Line
 
 import cv2
@@ -62,18 +63,26 @@ class MainBox(BoxLayout):
         self.list_databaces.bind(on_release = dropdown_databaces.open)
         dropdown_databaces.bind(on_select = lambda instance, x: setattr(self.list_databaces, 'text', x))
 
+        self.box_methods = BoxLayout(orientation='horizontal', size_hint=(1, .1), spacing = 10)
         # List of methods
         dropdown_methods = DropDown()
         for method in ALL_LS_METHODS: 
             btn = Button(
-                text = method, on_press=lambda instance: setattr(self, 'method', instance.text), 
+                text = method, on_press=self.set_method, 
                 size_hint_y = None, height = 30, 
                 background_color = (.6, .9, 1, .5)) 
             btn.bind(on_release = lambda btn: dropdown_methods.select(btn.text)) 
             dropdown_methods.add_widget(btn) 
-        self.list_methods = Button(text ='Методы', size_hint=(1, .1), background_color = (.6, .9, 1, 1))
-        self.list_methods.bind(on_release = dropdown_methods.open)
-        dropdown_methods.bind(on_select = lambda instance, x: setattr(self.list_methods, 'text', x))
+        list_methods = Button(text ='Методы', size_hint=(.9, 1), background_color = (.6, .9, 1, 1))
+        list_methods.bind(on_release = dropdown_methods.open)
+        dropdown_methods.bind(on_select = lambda instance, x: setattr(list_methods, 'text', x))
+
+        self.method_window_size = TextInput(text='10', disabled=True,
+            size_hint=(.1, .6), pos_hint={"center_y":.5},
+            multiline=False, input_type='number', input_filter='int')
+
+        self.box_methods.add_widget(list_methods)
+        self.box_methods.add_widget(self.method_window_size)
 
         # Run alg
         self.bth_run_alg = Button(text='ПОИСК', on_press=self.run_alg,
@@ -83,7 +92,7 @@ class MainBox(BoxLayout):
             size_hint = (1, 0.2))
 
         self.tools_box.add_widget(self.list_databaces)
-        self.tools_box.add_widget(self.list_methods)
+        self.tools_box.add_widget(self.box_methods)
         self.tools_box.add_widget(self.bth_run_alg)
 
         self.add_widget(self.source)
@@ -91,6 +100,11 @@ class MainBox(BoxLayout):
 
     def update_bg(self, *args): 
         self.bg.pos = self.pos ; self.bg.size = self.size
+
+    def set_method(self, instance):
+        self.method = instance.text
+        if self.method == 'window': self.method_window_size.disabled = False
+        else: self.method_window_size.disabled = True
 
     def _get_line_percentage(self, source_img, line):
         '''Get percentage line on source img'''
@@ -120,6 +134,11 @@ class MainBox(BoxLayout):
 
     def run_alg(self, instance):
         self.source.img.clear()
+        params = {}
+        if self.method == 'window':
+            win_size = int(self.method_window_size.text)
+            if win_size <= 0: return
+            params['win_size'] = win_size
         
         ''' ============== INPUT ============== '''
         # Load orig images
@@ -129,7 +148,7 @@ class MainBox(BoxLayout):
             source_img = imageio.imread(self.source.img_path)
 
         ''' ============== RUN detection ============== '''
-        lines = search_lines(source_img, self.method)
+        lines = search_lines(source_img, self.method, **params)
         if lines is None: return
         *lines, centers = lines
 

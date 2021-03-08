@@ -8,7 +8,7 @@ block_cipher = None
 a = Analysis(['C:\\Users\\User\\Desktop\\4 курс\\Семестр 2\\Прикладные задачи построения современных вычислительных систем\\Задание 2\\SPBU_FaceDetection\\main.py'],
              pathex=['C:\\Users\\User\\Desktop\\4 курс\\Семестр 2\\Прикладные задачи построения современных вычислительных систем\\Задание 2\\SPBU_FaceDetection'],
              binaries=[],
-             datas=[],
+             datas=[('data', 'data'), ('src\\core\\viola_jones\\*.xml', 'src\\core\\viola_jones')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -29,7 +29,8 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=True )
-coll = COLLECT(exe, Tree('data\\'),
+
+coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
                a.datas,

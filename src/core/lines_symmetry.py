@@ -7,18 +7,17 @@ from src.core.viola_jones import detected
 
 ''' ============ SEARCH METHODS ============ '''
 
-def _search_line_window(img):
+def _search_line_window(img, win_size = 10):
     '''Search line symmetry by window method'''
-    w = 40 # size of window
+    w = win_size # size of window
 
     x_min = None
     d_min = np.iinfo(np.int32).max
 
     _, w_img = img.shape
-    for x in range(w,w_img,w):
-        if w_img - x < w: break
-        img_L = img[:, x-w:x]
-        img_R = np.flip(img[:, x:x+w], axis=1)
+    for x in range(w,w_img-w):
+        img_L = img[:, x-w:x].astype(np.int32)
+        img_R = np.flip(img[:, x:x+w], axis=1).astype(np.int32)
         d = np.sum(np.abs(img_L - img_R))
         if d < d_min: x_min = x ; d_min = d
 
@@ -72,10 +71,10 @@ def _rotate_image(image, angle):
     return result
 
 
-def search_lines(img, method='express'):
+def search_lines(img, method='express', **params):
     # Detections areas of face and eyes by Viola Jones
     detections = detected(img)
-    if len(detections) != 3: return None
+    if len(detections) != 3: return
     face, eye1, eye2 = detections
 
     # Count centers of areas eyes
@@ -95,7 +94,8 @@ def search_lines(img, method='express'):
 
     # Search central line of symmentry and rotate it
     if method == 'express': x_central = _search_line_express(rot_face_img)
-    if method == 'window': x_central = _search_line_window(rot_face_img)
+    if method == 'window': x_central = _search_line_window(rot_face_img, **params)
+    if x_central is None: return
     p1_central, p2_central = _rotate_vec(np.array([x_central, 0]), np.array([x_central, h_f]), -angle)
     p1_central = (x_f + p1_central[0], y_f + p1_central[1])
     p2_central = (x_f + p2_central[0], y_f + p2_central[1])
